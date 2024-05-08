@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="39797318-d5f7-40f5-8597-1ad0df6dac24" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="ramaFlow" doc:id="9519bd97-61b9-45dd-9a83-ea673110789e" >
+		<http:listener doc:name="Listener" doc:id="39eba422-1a10-4603-b47a-f37411ac0283" config-ref="HTTP_Listener_config" path="/rama"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c140cb21-6475-4c7a-bb57-66a163109799" />
+		<ee:transform doc:name="Transform XML to JSON" doc:id="54a9138c-881f-44c9-a414-6df4782745bf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	item: {
+		price: payload.book.price,
+		properties: {
+			title: payload.book.title,
+			author:payload.book.author,
+			year: payload.book.year,
+			lungage: payload.book.title.@lang
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="ramaFlow1" doc:id="d2761420-09ff-42b0-980f-dd33e0780943" >
+		<ee:transform doc:name="Transform Attributes Based  JSON to XML" doc:id="b7c5c1a8-ec44-4f6f-b0be-07aa655a56e8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	book: {
+		title @(lang: payload.item.properties.lungage): payload.item."type",
+		price: payload.item.price,
+		author @(loc: "USA"): payload.item.properties.author[0]
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="ramaFlow3" doc:id="7bf1cc95-3810-4115-82f8-62bb51c83ccf" >
+		<ee:transform doc:name="Transform  JSON to CSV" doc:id="3145b3ab-3d1b-43b2-8c0f-2893e3446b4f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+[{
+	empID: payload.item.properties.title,
+	empStatus: payload.item.price as String
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

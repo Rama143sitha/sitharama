@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="sithaFlow" doc:id="7547b9c2-51a2-4d14-ba77-ad4549e587cb" >
+		<http:listener doc:name="Listener" doc:id="3622606b-4654-47f1-a62d-a876f47a7229" config-ref="HTTP_Listener_config" path="/sitha"/>
+		<logger level="INFO" doc:name="Logger" doc:id="12cc4ddd-c08e-4b92-ab74-d1087c7554be" />
+		<ee:transform doc:name="Transform Message" doc:id="a524b1d6-091f-4b20-a4a8-a753b5fe54bd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="1aeef2ca-7521-4581-8a69-cac19b5ecdd1" />
+	</flow>
+</mule>
